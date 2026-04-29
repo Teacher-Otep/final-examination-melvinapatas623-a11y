@@ -53,9 +53,87 @@
 <br/><br/><br/><br/>
 
     <section id="read" class="content"> View Students </section>
-    <section id="update" class="content"> Update Student Records </section>
-    <section id="delete" class="content"> Remove Student Records </section>
+    <section id="update" class="content">
+<h1 class="contenttitle">Update Student</h1>
 
+<form method="GET">
+    <input type="number" name="id" placeholder="Enter Student ID" required>
+    <button type="submit">Search</button>
+</form>
+
+<?php
+$conn = new mysqli("localhost", "root", "", "your_database");
+
+if (isset($_GET['id'])) {
+    $id = $_GET['id'];
+    $result = $conn->query("SELECT * FROM students WHERE id=$id");
+
+    if ($result->num_rows > 0) {
+        $row = $result->fetch_assoc();
+?>
+
+<form method="POST">
+    <input type="hidden" name="update_id" value="<?php echo $row['id']; ?>">
+
+    <input type="text" name="surname" value="<?php echo $row['surname']; ?>"><br>
+    <input type="text" name="name" value="<?php echo $row['name']; ?>"><br>
+    <input type="text" name="middlename" value="<?php echo $row['middlename']; ?>"><br>
+    <input type="text" name="address" value="<?php echo $row['address']; ?>"><br>
+    <input type="text" name="contact" value="<?php echo $row['contact']; ?>"><br>
+
+    <button type="submit" name="update">Update</button>
+</form>
+
+<?php
+    } else {
+        echo "No student found.";
+    }
+}
+
+if (isset($_POST['update'])) {
+    $id = $_POST['update_id'];
+    $surname = $_POST['surname'];
+    $name = $_POST['name'];
+    $middlename = $_POST['middlename'];
+    $address = $_POST['address'];
+    $contact = $_POST['contact'];
+
+    $conn->query("UPDATE students SET 
+        surname='$surname',
+        name='$name',
+        middlename='$middlename',
+        address='$address',
+        contact='$contact'
+        WHERE id=$id");
+
+    echo "Updated successfully!";
+}
+?>
+</section>
+
+<section id="delete" class="content">
+<h1 class="contenttitle">Delete Student</h1>
+
+<form method="POST">
+    <input type="number" name="delete_id" placeholder="Enter Student ID" required>
+    <button type="submit" name="delete">Delete</button>
+</form>
+
+<?php
+$conn = new mysqli("localhost", "root", "", "your_database");
+
+if (isset($_POST['delete'])) {
+    $id = $_POST['delete_id'];
+
+    $conn->query("DELETE FROM students WHERE id=$id");
+
+    echo "Deleted successfully!";
+}
+?>
+</section>
+
+
+   
 
 
     <script src="script.js"></script>
