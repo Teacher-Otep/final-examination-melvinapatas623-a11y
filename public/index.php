@@ -52,7 +52,57 @@
 
 <br/><br/><br/><br/>
 
-    <section id="read" class="content"> View Students </section>
+    <section id="read" class="content">
+<h1 class="contenttitle">All Students</h1>
+
+<?php
+$conn = new mysqli("localhost", "root", "", "your_database");
+
+// Check connection
+if ($conn->connect_error) {
+    die("Connection failed: " . $conn->connect_error);
+}
+
+$sql = "SELECT * FROM students";
+$result = $conn->query($sql);
+
+if ($result->num_rows > 0) {
+?>
+    <table border="1" cellpadding="10">
+        <tr>
+            <th>ID</th>
+            <th>Surname</th>
+            <th>Name</th>
+            <th>Middle Name</th>
+            <th>Address</th>
+            <th>Contact</th>
+        </tr>
+
+<?php
+    while ($row = $result->fetch_assoc()) {
+?>
+        <tr>
+            <td><?php echo $row['id']; ?></td>
+            <td><?php echo $row['surname']; ?></td>
+            <td><?php echo $row['name']; ?></td>
+            <td><?php echo $row['middlename']; ?></td>
+            <td><?php echo $row['address']; ?></td>
+            <td><?php echo $row['contact']; ?></td>
+        </tr>
+<?php
+    }
+?>
+    </table>
+<?php
+} else {
+    echo "<p>No records found.</p>";
+}
+
+$conn->close();
+?>
+</section>
+
+
     <section id="update" class="content">
 <h1 class="contenttitle">Update Student</h1>
 
