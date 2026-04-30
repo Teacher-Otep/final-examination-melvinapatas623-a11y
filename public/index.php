@@ -1,191 +1,107 @@
+<?php require_once 'includes/db.php'; ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD Operations</title>
-    <link   rel="stylesheet" href="style.css">
+    <title>CRUD</title>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-            <img src="../images/northhub.svg" id="logo"></img>
-            <button class="navbarbuttons" onclick="showSection('create')"> Create </button>
-            <button class="navbarbuttons" > Read </button>
-            <button class="navbarbuttons" > Update </button>
-            <button class="navbarbuttons" > Delete </button>
-    </nav>
-    <section id="home" class="homecontent"> 
-        <h1 class="splash">Welcome to Student Management System</h1>
-        <h2 class="splash">A Project in Integrative Programming Technologies</h2>
-    </section>
-    
-    <section id="create" class="content">
-        <h1 class="contenttitle"> Insert New Student </h1>
 
-    <form action="../includes/insert.php" method="POST">
-        <label for="surname" class="label">Surname</label>
-        <input type="text" name="surname" id="surname" class="field" required><br/>
+<nav class="navbar">
+    <img src="images/northhub.svg" id="logo" onclick="showSection('home')">
+    <button onclick="showSection('create')">Create</button>
+    <button onclick="showSection('read')">Read</button>
+    <button onclick="showSection('update')">Update</button>
+    <button onclick="showSection('delete')">Delete</button>
+</nav>
 
-        <label for="name" class="label">Name</label>
-        <input type="text" name="name" id="name" class="field" required><br/>
+<section id="home" class="homecontent">
+    <h1>Welcome</h1>
+</section>
 
-        <label for="middlename" class="label">Middle name</label>
-        <input type="text" name="middlename" id="middlename" class="field"><br/>
+<section id="create" class="content" style="display:none;">
+<form action="includes/insert.php" method="POST">
+<input type="text" name="surname" placeholder="Surname" required><br>
+<input type="text" name="name" placeholder="Name" required><br>
+<input type="text" name="middlename"><br>
+<input type="text" name="address"><br>
+<input type="text" name="contact_number"><br>
 
-        <label for="address" class="label">Address</label>
-        <input type="text" name="address" id="address" class="field"><br/>
+<button type="button" id="clrbtn">Clear</button>
+<button type="submit">Save</button>
+</form>
 
-        <label for="contact" class="label">Mobile Number</label>
-        <input type="text" name="contact" id="contact" class="field"><br/>
+<div id="success-toast" class="toast-hidden">Saved!</div>
+</section>
 
-        <div id="btncontainer">
-            <button type="button" id="clrbtn" class="btns">Clear Fields</button><br/>
-            <button type="submit" id="savebtn" class="btns">Save</button>
-        </div>
-
-        <div id="success-toast" class="toast-hidden">
-            Registration Successful!
-        </div>
-    </form>   
-
-    </section>
-
-<br/><br/><br/><br/>
-
-    <section id="read" class="content">
-<h1 class="contenttitle">All Students</h1>
-
+<section id="read" class="content" style="display:none;">
 <?php
-$conn = new mysqli("localhost", "root", "", "your_database");
-
-// Check connection
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+$stmt = $pdo->query("SELECT * FROM students");
+while($row = $stmt->fetch()){
+    echo $row['id']." ".$row['name']." ".$row['surname']."<br>";
 }
-
-$sql = "SELECT * FROM students";
-$result = $conn->query($sql);
-
-if ($result->num_rows > 0) {
-?>
-    <table border="1" cellpadding="10">
-        <tr>
-            <th>ID</th>
-            <th>Surname</th>
-            <th>Name</th>
-            <th>Middle Name</th>
-            <th>Address</th>
-            <th>Contact</th>
-        </tr>
-
-<?php
-    while ($row = $result->fetch_assoc()) {
-?>
-        <tr>
-            <td><?php echo $row['id']; ?></td>
-            <td><?php echo $row['surname']; ?></td>
-            <td><?php echo $row['name']; ?></td>
-            <td><?php echo $row['middlename']; ?></td>
-            <td><?php echo $row['address']; ?></td>
-            <td><?php echo $row['contact']; ?></td>
-        </tr>
-<?php
-    }
-?>
-    </table>
-<?php
-} else {
-    echo "<p>No records found.</p>";
-}
-
-$conn->close();
 ?>
 </section>
 
-
-    <section id="update" class="content">
-<h1 class="contenttitle">Update Student</h1>
-
+<section id="update" class="content" style="display:none;">
 <form method="GET">
-    <input type="number" name="id" placeholder="Enter Student ID" required>
-    <button type="submit">Search</button>
+<input type="number" name="id">
+<button type="submit">Search</button>
 </form>
 
 <?php
-$conn = new mysqli("localhost", "root", "", "your_database");
+if(isset($_GET['id'])){
+$id = intval($_GET['id']);
+$stmt = $pdo->prepare("SELECT * FROM students WHERE id=?");
+$stmt->execute([$id]);
+$row = $stmt->fetch();
 
-if (isset($_GET['id'])) {
-    $id = $_GET['id'];
-    $result = $conn->query("SELECT * FROM students WHERE id=$id");
-
-    if ($result->num_rows > 0) {
-        $row = $result->fetch_assoc();
+if($row){
 ?>
-
 <form method="POST">
-    <input type="hidden" name="update_id" value="<?php echo $row['id']; ?>">
+<input type="hidden" name="update_id" value="<?= $row['id'] ?>">
+<input type="text" name="surname" value="<?= $row['surname'] ?>"><br>
+<input type="text" name="name" value="<?= $row['name'] ?>"><br>
+<input type="text" name="middlename" value="<?= $row['middlename'] ?>"><br>
+<input type="text" name="address" value="<?= $row['address'] ?>"><br>
+<input type="text" name="contact_number" value="<?= $row['contact_number'] ?>"><br>
 
-    <input type="text" name="surname" value="<?php echo $row['surname']; ?>"><br>
-    <input type="text" name="name" value="<?php echo $row['name']; ?>"><br>
-    <input type="text" name="middlename" value="<?php echo $row['middlename']; ?>"><br>
-    <input type="text" name="address" value="<?php echo $row['address']; ?>"><br>
-    <input type="text" name="contact" value="<?php echo $row['contact']; ?>"><br>
-
-    <button type="submit" name="update">Update</button>
+<button name="update">Update</button>
 </form>
+<?php } }
 
-<?php
-    } else {
-        echo "No student found.";
-    }
-}
+if(isset($_POST['update'])){
+$stmt = $pdo->prepare("UPDATE students SET surname=?, name=?, middlename=?, address=?, contact_number=? WHERE id=?");
+$stmt->execute([
+$_POST['surname'],
+$_POST['name'],
+$_POST['middlename'],
+$_POST['address'],
+$_POST['contact_number'],
+$_POST['update_id']
+]);
 
-if (isset($_POST['update'])) {
-    $id = $_POST['update_id'];
-    $surname = $_POST['surname'];
-    $name = $_POST['name'];
-    $middlename = $_POST['middlename'];
-    $address = $_POST['address'];
-    $contact = $_POST['contact'];
-
-    $conn->query("UPDATE students SET 
-        surname='$surname',
-        name='$name',
-        middlename='$middlename',
-        address='$address',
-        contact='$contact'
-        WHERE id=$id");
-
-    echo "Updated successfully!";
+header("Location: index.php");
 }
 ?>
 </section>
 
-<section id="delete" class="content">
-<h1 class="contenttitle">Delete Student</h1>
-
+<section id="delete" class="content" style="display:none;">
 <form method="POST">
-    <input type="number" name="delete_id" placeholder="Enter Student ID" required>
-    <button type="submit" name="delete">Delete</button>
+<input type="number" name="delete_id">
+<button name="delete">Delete</button>
 </form>
 
 <?php
-$conn = new mysqli("localhost", "root", "", "your_database");
+if(isset($_POST['delete'])){
+$stmt = $pdo->prepare("DELETE FROM students WHERE id=?");
+$stmt->execute([$_POST['delete_id']]);
 
-if (isset($_POST['delete'])) {
-    $id = $_POST['delete_id'];
-
-    $conn->query("DELETE FROM students WHERE id=$id");
-
-    echo "Deleted successfully!";
+header("Location: index.php");
 }
 ?>
 </section>
 
-
-   
-
-
-    <script src="script.js"></script>
+<script src="script.js"></script>
 </body>
 </html>
