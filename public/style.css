@@ -1,92 +1,37 @@
 body{
-    display:flex;
-    justify-content: center;
-    flex-direction: column;
-    background-color: rgb(255, 255, 255);
+    text-align:center;
+    font-family:Arial;
 }
+
 .navbar{
-    display: flex;
-    justify-content:space-evenly;
-    width:80%;
-    height:5vh;
-    align-items: center;
-    background-color: rgba(102, 176, 241, 1);
-    color: white;
-    border-radius:45px;
+    display:flex;
+    justify-content:space-around;
+    background:#66b0f1;
+    padding:10px;
 }
 
 #logo{
     width:40px;
-    height:auto;
-    filter: invert(30%) sepia(100%) saturate(500%) hue-rotate(200deg);
+    cursor:pointer;
 }
 
-.navbarbuttons{
-    background-color:rgba(240, 255, 255, .3);
-    border:none;
-    width:100px;
-    border-radius:45px;
-    backdrop-filter: 5px;
-    color:aliceblue;
+button{
+    padding:5px 10px;
 }
 
-.content,.homecontent{
-    display:block;
-    align-items: center;
+.content{
+    margin-top:20px;
 }
 
-.contenttitle,.label,.btns,.splash{
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-    color:rgb(102, 176, 241); 
-
+#success-toast{
+    position:fixed;
+    top:20px;
+    right:20px;
+    background:green;
+    color:white;
+    padding:10px;
 }
 
-.splash{
-    font-style: italic;
-}
-
-.label,.field,.btns{
-    margin-top:10px;
-}
-
-.label {
-    display: inline-block;
-    width: 150px; 
-    font-weight: bold;
-}
-
-.field {
-    display: inline-block;
-    width: 250px; 
-    padding: 5px;
-    box-sizing: border-box; 
-}
-
-.btns{
-    width:182px;
-    padding:3px;
-}
-
-#btncontainer{
-    display:flex;
-    gap:20px;
-}
-
-/* For the insertion success message */
-#success-toast {
-    position: fixed;
-    top: 20px;
-    right: 20px;
-    background-color: #4CAF50;
-    color: white;
-    padding: 16px;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
-    transition: opacity 0.5s ease-in-out;
-    z-index: 1000;
-}
-
-.toast-hidden {
-    display: none;
-    opacity: 0;
+.toast-hidden{
+    display:none;
 }
