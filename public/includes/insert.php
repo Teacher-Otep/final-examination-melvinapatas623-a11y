@@ -1,5 +1,9 @@
 <?php
+<<<<<<< HEAD
 require_once DIR . '/db.php';
+=======
+require_once _DIR_ . '/db.php';
+>>>>>>> cd3c9bdbde0789e01419739ebaf484fa5e601da9
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
