@@ -103,5 +103,6 @@ header("Location: index.php");
 </section>
 
 <script src="script.js"></script>
+
 </body>
 </html>
