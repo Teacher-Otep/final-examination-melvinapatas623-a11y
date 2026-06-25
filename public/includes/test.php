@@ -1,9 +1,4 @@
 <?php
-require 'db.php';
+echo'<p>Hello world</p>';
 
-if (isset($pdo)) {
-    echo "connected suceesfully sa database!";
-} else {
-    echo "May problema sa \$pdo variable.";
-}
 ?>
