@@ -1,79 +1,108 @@
+<?php require_once 'includes/db.php'; ?>
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>CRUD Operations</title>
+    <title>CRUD</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <nav class="navbar">
-<div class="logo" onclick="hideAll()">
 
-    <div class="circle-logo">
+<nav class="navbar">
+    <img src="images/northhub.svg" id="logo" onclick="showSection('home')">
+    <button onclick="showSection('create')">Create</button>
+    <button onclick="showSection('read')">Read</button>
+    <button onclick="showSection('update')">Update</button>
+    <button onclick="showSection('delete')">Delete</button>
+</nav>
 
-        <div class="leaf center"></div>
-        <div class="leaf left1"></div>
-        <div class="leaf right1"></div>
-        <div class="leaf left2"></div>
-        <div class="leaf right2"></div>
-        <div class="stem"></div>
+<section id="home" class="homecontent">
+    <h1>Welcome</h1>
+</section>
 
-    </div>
+<section id="create" class="content" style="display:none;">
+<form action="includes/insert.php" method="POST">
+<input type="text" name="surname" placeholder="Surname" required><br>
+<input type="text" name="name" placeholder="Name" required><br>
+<input type="text" name="middlename"><br>
+<input type="text" name="address"><br>
+<input type="text" name="contact_number"><br>
 
-    <p>CRUD</p>
-</div>
+<button type="button" id="clrbtn">Clear</button>
+<button type="submit">Save</button>
+</form>
 
-            <button class="navbarbuttons" onclick="showSection('create')"> Create </button>
-            <button class="navbarbuttons" onclick="showSection('read')"> Read </button>
-            <button class="navbarbuttons" onclick="showSection('update')"> Update </button>
-            <button class="navbarbuttons" onclick="showSection('delete')"> Delete </button>
-    </nav>
-  
-    <section id="home" class="homecontent"> 
-        <h1 class="splash">Welcome to Student Management System</h1>
-        <h2 class="splash">A Project in Integrative Programming Technologies</h2>
-    </section>
-    
-    <section id="create" class="content">
-        <h1 class="contenttitle"> Insert New Student </h1>
+<div id="success-toast" class="toast-hidden">Saved!</div>
+</section>
 
-    <form action="../includes/insert.php" method="POST">
-        <label for="surname" class="label">Surname</label>
-        <input type="text" name="surname" id="surname" class="field" required><br/>
+<section id="read" class="content" style="display:none;">
+<?php
+$stmt = $pdo->query("SELECT * FROM students");
+while($row = $stmt->fetch()){
+    echo $row['id']." ".$row['name']." ".$row['surname']."<br>";
+}
+?>
+</section>
 
-        <label for="name" class="label">Name</label>
-        <input type="text" name="name" id="name" class="field" required><br/>
+<section id="update" class="content" style="display:none;">
+<form method="GET">
+<input type="number" name="id">
+<button type="submit">Search</button>
+</form>
 
-        <label for="middlename" class="label">Middle name</label>
-        <input type="text" name="middlename" id="middlename" class="field"><br/>
+<?php
+if(isset($_GET['id'])){
+$id = intval($_GET['id']);
+$stmt = $pdo->prepare("SELECT * FROM students WHERE id=?");
+$stmt->execute([$id]);
+$row = $stmt->fetch();
 
-        <label for="address" class="label">Address</label>
-        <input type="text" name="address" id="address" class="field"><br/>
+if($row){
+?>
+<form method="POST">
+<input type="hidden" name="update_id" value="<?= $row['id'] ?>">
+<input type="text" name="surname" value="<?= $row['surname'] ?>"><br>
+<input type="text" name="name" value="<?= $row['name'] ?>"><br>
+<input type="text" name="middlename" value="<?= $row['middlename'] ?>"><br>
+<input type="text" name="address" value="<?= $row['address'] ?>"><br>
+<input type="text" name="contact_number" value="<?= $row['contact_number'] ?>"><br>
 
-        <label for="contact" class="label">Mobile Number</label>
-        <input type="text" name="contact" id="contact" class="field"><br/>
+<button name="update">Update</button>
+</form>
+<?php } }
 
-        <div id="btncontainer">
-            <button type="button" id="clrbtn" class="btns">Clear Fields</button><br/>
-            <button type="submit" id="savebtn" class="btns">Save</button>
-        </div>
+if(isset($_POST['update'])){
+$stmt = $pdo->prepare("UPDATE students SET surname=?, name=?, middlename=?, address=?, contact_number=? WHERE id=?");
+$stmt->execute([
+$_POST['surname'],
+$_POST['name'],
+$_POST['middlename'],
+$_POST['address'],
+$_POST['contact_number'],
+$_POST['update_id']
+]);
 
-        <div id="success-toast" class="toast-hidden">
-            Registration Successful!
-        </div>
-    </form>   
+header("Location: index.php");
+}
+?>
+</section>
 
-    </section>
+<section id="delete" class="content" style="display:none;">
+<form method="POST">
+<input type="number" name="delete_id">
+<button name="delete">Delete</button>
+</form>
 
-<br/><br/><br/><br/>
+<?php
+if(isset($_POST['delete'])){
+$stmt = $pdo->prepare("DELETE FROM students WHERE id=?");
+$stmt->execute([$_POST['delete_id']]);
 
-    <section id="read" class="content"> View Students </section>
-    <section id="update" class="content"> Update Student Records </section>
-    <section id="delete" class="content"> Remove Student Records </section>
+header("Location: index.php");
+}
+?>
+</section>
 
+<script src="script.js"></script>
 
-
-    <script src="script.js"></script>
 </body>
 </html>
